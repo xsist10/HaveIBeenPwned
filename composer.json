@@ -1,0 +1,16 @@
+{
+    "name": "xsist10/haveibeenpwned",
+    "description": "Client for the \"Have I Been Pwned\" API",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Thomas Shone",
+            "email": "xsist10@gmail.com"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": { "xsist10\\HaveIBeenPwned\\": "src/" }
+    }
+}
