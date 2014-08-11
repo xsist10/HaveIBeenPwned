@@ -21,7 +21,7 @@ class HaveIBeenPwned
                 'CN_match'            => 'www.haveibeenpwned.com',
                 'disable_compression' => true
             )
-        );
+        ));
         
         $result = @file_get_contents($url, false, $context);
         if (empty($result))
