@@ -17,31 +17,35 @@ class HaveIBeenPwned
 
     protected function getAdapter() {
         // Backwards compatability as I won't bump the version number for this
-        // yet.
+        // yet. When I add PHP 7 support I'll bump it and remove this.
         if (!$this->adapter) {
             $this->adapter = new FileGetContents();
         }
         return $this->adapter;
     }
 
+    protected function get($url) {
+        //echo self::$base_url . $url . "\n";
+        return json_decode($this->getAdapter()->get(self::$base_url . $url), true);
+    }
+
     public function checkAccount($account) {
-        $url = self::$base_url . "breachedaccount/" . urlencode($account);
-        return json_decode($this->getAdapter()->get($url), true);
+        return $this->get("breachedaccount/" . urlencode($account));
     }
 
     public function getBreaches() {
-        $url = self::$base_url . "breaches";
-        return json_decode($this->getAdapter()->get($url), true);
+        return $this->get("breaches");
     }
 
     public function getBreach($name) {
-        $url = self::$base_url . "breach/" . urlencode($name);
-        return json_decode($this->getAdapter()->get($url), true);
+        return $this->get("breach/" . urlencode($name));
     }
 
-    public function getDataClasses()
-    {
-        $url = self::$base_url . "dataclasses";
-        return json_decode($this->getAdapter()->get($url), true);
+    public function getDataClasses() {
+        return $this->get("dataclasses");
+    }
+
+    public function getPasteAccount($account) {
+        return $this->get("pasteaccount/" . urlencode($account));
     }
 }
