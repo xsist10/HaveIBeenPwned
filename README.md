@@ -1,5 +1,7 @@
 # HaveIBeenPwned PHP client
 
+[![Build Status](https://travis-ci.org/xsist10/HaveIBeenPwned.svg?branch=master)](hhttps://travis-ci.org/xsist10/HaveIBeenPwned)
+
 ## Install
 
 ``` json
