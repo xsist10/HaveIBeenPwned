@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.2"
+        "php": ">=5.5"
     },
     "autoload": {
         "psr-4": { "xsist10\\HaveIBeenPwned\\": "src/" }
