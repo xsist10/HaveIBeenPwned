@@ -2,54 +2,46 @@
 
 namespace xsist10\HaveIBeenPwned;
 
+use xsist10\HaveIBeenPwned\Adapter\Adapter;
+use xsist10\HaveIBeenPwned\Adapter\FileGetContents;
+
 class HaveIBeenPwned
 {
-	protected function _get($url) {
-		if (!ini_get('allow_url_fopen')) {
-            throw new UnavailableException('allow_url_fopen disabled.');
+    private static $base_url = "https://haveibeenpwned.com/api/v2/";
+
+    protected $adapter;
+
+    public function __construct(Adapter $adapter = null) {
+        $this->adapter = $adapter;
+    }
+
+    protected function getAdapter() {
+        // Backwards compatability as I won't bump the version number for this
+        // yet.
+        if (!$this->adapter) {
+            $this->adapter = new FileGetContents();
         }
+        return $this->adapter;
+    }
 
-        $context = stream_context_create(array(
-            'http' => array(
-                'user_agent'          => 'xsist10-PHP-client'
-            ),
-            'ssl' => array(
-            	'method'              => 'GET',
-                'verify_peer'         => true,
-                'verify_depth'        => 5,
-                'cafile'              => __DIR__ . '/../cacert.pem',
-                'CN_match'            => 'www.haveibeenpwned.com',
-                'disable_compression' => true
-            )
-        ));
-        
-        $result = @file_get_contents($url, false, $context);
-        if (empty($result))
-        {
-            $result = '[]';
-        }
+    public function checkAccount($account) {
+        $url = self::$base_url . "breachedaccount/" . urlencode($account);
+        return json_decode($this->getAdapter()->get($url), true);
+    }
 
-        return $result;
-	}
-
-	public function checkAccount($account) {
-		$url = "https://haveibeenpwned.com/api/v2/breachedaccount/" . urlencode($account);
-		return json_decode($this->_get($url), true);
-	}
-
-	public function getBreaches() {
-		$url = "https://haveibeenpwned.com/api/v2/breaches";
-        return json_decode($this->_get($url), true);
-	}
+    public function getBreaches() {
+        $url = self::$base_url . "breaches";
+        return json_decode($this->getAdapter()->get($url), true);
+    }
 
     public function getBreach($name) {
-        $url = "https://haveibeenpwned.com/api/v2/breach/" . urlencode($name);
-        return json_decode($this->_get($url), true);
+        $url = self::$base_url . "breach/" . urlencode($name);
+        return json_decode($this->getAdapter()->get($url), true);
     }
 
     public function getDataClasses()
     {
-        $url = "https://haveibeenpwned.com/api/v2/dataclasses";
-        return json_decode($this->_get($url), true);
+        $url = self::$base_url . "dataclasses";
+        return json_decode($this->getAdapter()->get($url), true);
     }
 }
