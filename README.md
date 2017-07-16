@@ -22,6 +22,14 @@ $manager = new HaveIBeenPwned();
 $manager->checkAccount("your_email_address");
 ```
 
+### Check if your account has been leaked in a paste
+``` php
+use xsist10\HaveIBeenPwned\HaveIBeenPwned;
+
+$manager = new HaveIBeenPwned();
+$manager->getPasteAccount("your_email_address");
+```
+
 ### List all breaches that have are on record
 ``` php
 use xsist10\HaveIBeenPwned\HaveIBeenPwned;
