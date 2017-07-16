@@ -2,11 +2,13 @@
 
 namespace xsist10\HaveIBeenPwned\Adapter;
 
+use \RuntimeException;
+
 class FileGetContents implements Adapter
 {
     public function get($url) {
         if (!ini_get('allow_url_fopen')) {
-            throw new UnavailableException('allow_url_fopen disabled.');
+            throw new RuntimeException('allow_url_fopen disabled.');
         }
 
         $context = stream_context_create(array(
