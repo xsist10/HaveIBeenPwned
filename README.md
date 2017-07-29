@@ -14,6 +14,23 @@
 
 ## Usage
 
+### Create manager instance
+``` php
+use xsist10\HaveIBeenPwned\HaveIBeenPwned;
+use xsist10\HaveIBeenPwned\Adapter\Curl;
+use xsist10\HaveIBeenPwned\Adapter\FileGetContents;
+
+// By default the $manager will use a Curl adapter
+$manager = new HaveIBeenPwned();
+
+// You can create a new manager with a specified adapter
+$manager = new HaveIBeenPwned(new Curl());
+
+// You can also set the adapter after creation
+$manager->setAdapter(new FileGetContents());
+
+```
+
 ### Check if you've been pwned
 ``` php
 use xsist10\HaveIBeenPwned\HaveIBeenPwned;
@@ -46,6 +63,34 @@ use xsist10\HaveIBeenPwned\HaveIBeenPwned;
 
 $manager = new HaveIBeenPwned();
 $manager->getDataClasses();
+```
+
+## Logger Support
+
+The adapters support [PSR-3 Logger](http://www.php-fig.org/psr/psr-3/). I recommend using [monolog](https://github.com/Seldaek/monolog).
+
+### Install Monolog
+```bash
+$ composer require monolog/monolog
+```
+
+### Use Monolog with HaveIBeenPwned
+```php
+use xsist10\HaveIBeenPwned\HaveIBeenPwned;
+use xsist10\HaveIBeenPwned\Adapter\Curl;
+
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+$log = new Logger('name');
+// Push all logging up to the level of DEBUG to our log file
+$log->pushHandler(new StreamHandler('[full log filename]', Logger::DEBUG));
+
+$adapter = new Curl();
+$adapter->setLogger($log);
+$manager = new HaveIBeenPwned($adapter);
+
+// Calls made to HaveIBeenPwned will be logged to your log file now
 ```
 
 ## Credits

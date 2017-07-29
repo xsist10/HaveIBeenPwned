@@ -4,6 +4,8 @@ namespace xsist10\HaveIBeenPwned;
 
 use xsist10\HaveIBeenPwned\Adapter\Adapter;
 use xsist10\HaveIBeenPwned\Adapter\FileGetContents;
+use xsist10\HaveIBeenPwned\Adapter\Curl;
+use xsist10\HaveIBeenPwned\Response\CheckAccountResponse;
 
 class HaveIBeenPwned
 {
@@ -15,18 +17,32 @@ class HaveIBeenPwned
         $this->adapter = $adapter;
     }
 
+    /**
+     * Return the adapter being used to connect to the remote server
+     *
+     * @return Adapter
+     */
     protected function getAdapter() {
         // Backwards compatability as I won't bump the version number for this
         // yet. When I add PHP 7 support I'll bump it and remove this.
         if (!$this->adapter) {
-            $this->adapter = new FileGetContents();
+            $this->adapter = new Curl();
         }
         return $this->adapter;
     }
 
+    /**
+     * Set a new adapter for the HaveIBeenPwned client
+     *
+     * @param Adapter $adapter Which adapter to use?
+     */
+    public function setAdapter(Adapter $adapter) {
+        $this->adapter = $adapter;
+    }
+
     protected function get($url) {
-        //echo self::$base_url . $url . "\n";
-        return json_decode($this->getAdapter()->get(self::$base_url . $url), true);
+        $body = $this->getAdapter()->get(self::$base_url . $url);
+        return json_decode($body ? $body : '[]', true);
     }
 
     public function checkAccount($account) {
