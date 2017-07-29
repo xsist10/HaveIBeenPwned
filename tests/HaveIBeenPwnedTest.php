@@ -59,7 +59,6 @@ class HaveIBeenPwnedTest extends \PHPUnit_Framework_TestCase
         $result = $this->client->checkAccount("test@example.com");
         $this->assertEquals(count($result), 1);
         $this->assertEquals($result[0]["Name"], "Dropbox");
-        $this->assertTrue($result->isCompromised());
     }
 
     /**
