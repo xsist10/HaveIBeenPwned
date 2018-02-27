@@ -37,6 +37,15 @@ EOT;
                 return <<<EOT
 ["Account balances","Age groups","Astrological signs","Auth tokens","Avatars","Bank account numbers","Banking PINs","Beauty ratings","Biometric data","Browser user agent details","Buying preferences","Car ownership statuses","Career levels","Charitable donations","Chat logs","Credit card CVV","Credit cards","Credit status information","Customer feedback","Customer interactions","Dates of birth","Deceased date","Device information","Device usage tracking data","Drinking habits","Drug habits","Education levels","Email addresses","Email messages","Employers","Ethnicities","Family members' names","Family plans","Family structure","Financial investments","Financial transactions","Fitness levels","Genders","Geographic locations","Government issued IDs","Health insurance information","Historical passwords","Home ownership statuses","Homepage URLs","Income levels","Instant messenger identities","IP addresses","Job titles","MAC addresses","Marital statuses","Names","Net worths","Nicknames","Parenting plans","Partial credit card data","Passport numbers","Password hints","Passwords","Payment histories","Payment methods","Personal descriptions","Personal health data","Personal interests","Phone numbers","Physical addresses","Physical attributes","Political donations","Political views","Private messages","Professional skills","Purchases","Purchasing habits","Races","Recovery email addresses","Relationship statuses","Religions","Reward program balances","Salutations","Security questions and answers","Sexual fetishes","Sexual orientations","Smoking habits","SMS messages","Social connections","Spoken languages","Survey results","Time zones","Travel habits","User statuses","User website URLs","Usernames","Utility bills","Vehicle details","Website activity","Work habits","Years of birth","Years of professional experience"]
 EOT;
+            case "https://api.pwnedpasswords.com/range/8CB22":
+                return <<<EOT
+002824894FDF3DFC5E65BC2F70F3E71A3D5:2
+020CC8A3FFB2C472677FB1A1A829F8B2829:5
+024E524103370D1614DC5AF875D6A347FE7:2
+FB489BA83064C04521AC99F4ED91422A7B3:17
+FF3699DA9826B207C6CB0305A87B2E73CB2:1
+37D0679CA88DB6464EAC60DA96345513964:2088998
+EOT;
         }
     }
 }
@@ -98,5 +107,12 @@ class HaveIBeenPwnedTest extends \PHPUnit_Framework_TestCase
         $result = $this->client->getDataClasses();
         $this->assertTrue(is_array($result));
         $this->assertEquals(count($result), 97);
+    }
+
+    public function testIsPasswordCompromised()
+    {
+        $result = $this->client->isPasswordCompromised("12345");
+        $this->assertTrue(is_numeric($result));
+        $this->assertEquals($result, 2088998);   
     }
 }

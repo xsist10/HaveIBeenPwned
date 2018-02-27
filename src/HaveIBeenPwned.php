@@ -11,6 +11,7 @@ use Psr\Log\NullLogger;
 class HaveIBeenPwned
 {
     private static $base_url = "https://haveibeenpwned.com/api/v2/";
+    private static $password_url = "https://api.pwnedpasswords.com/";
 
     protected $adapter;
 
@@ -65,5 +66,20 @@ class HaveIBeenPwned
 
     public function getPasteAccount($account) {
         return $this->get("pasteaccount/" . urlencode($account));
+    }
+
+    public function isPasswordCompromised($password) {
+        $sha1 = strtoupper(sha1($password));
+        $fragment = substr($sha1, 0, 5);
+
+        $body = $this->getAdapter()->get(self::$password_url . "range/" . urlencode($fragment));
+        foreach (explode("\n", $body) as $match) {
+            $line = explode(":", $match);
+            if ($fragment . $line[0] === $sha1) {
+                return $line[1];
+            }
+        }
+
+        return 0;
     }
 }

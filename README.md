@@ -33,25 +33,23 @@ $manager->setAdapter(new FileGetContents());
 
 ### Check if you've been pwned
 ``` php
-use xsist10\HaveIBeenPwned\HaveIBeenPwned;
-
-$manager = new HaveIBeenPwned();
 $manager->checkAccount("your_email_address");
 ```
 
 ### Check if your account has been leaked in a paste
 ``` php
-use xsist10\HaveIBeenPwned\HaveIBeenPwned;
-
-$manager = new HaveIBeenPwned();
 $manager->getPasteAccount("your_email_address");
+```
+
+### Check if your password has been leaked before
+``` php
+// Your password is not sent to the remote API. Only a partial of the SHA1
+// value is sent and all matching full SHA1 results are returned and compared.
+$numberOfTimesCompromised = $manager->isPasswordCompromised("your_password");
 ```
 
 ### List all breaches that have are on record
 ``` php
-use xsist10\HaveIBeenPwned\HaveIBeenPwned;
-
-$manager = new HaveIBeenPwned();
 $manager->getBreaches();
 
 $manager->getBreach('specific_breach_by_name');
@@ -59,9 +57,6 @@ $manager->getBreach('specific_breach_by_name');
 
 ### List the types of data that are covered when describing a leak
 ``` php
-use xsist10\HaveIBeenPwned\HaveIBeenPwned;
-
-$manager = new HaveIBeenPwned();
 $manager->getDataClasses();
 ```
 
