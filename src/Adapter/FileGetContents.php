@@ -3,6 +3,7 @@
 namespace xsist10\HaveIBeenPwned\Adapter;
 
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 use xsist10\HaveIBeenPwned\Exception\UnsupportedException;
 use \RuntimeException;
@@ -10,6 +11,10 @@ use \RuntimeException;
 class FileGetContents implements Adapter
 {
     use LoggerAwareTrait;
+
+    public function __construct() {
+        $this->setLogger(new NullLogger());
+    }
 
     /**
      * Does this environment support URL opening with the file handler

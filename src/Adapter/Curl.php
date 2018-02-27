@@ -8,10 +8,15 @@ use xsist10\HaveIBeenPwned\Exception\InvalidCredentialsException;
 use xsist10\HaveIBeenPwned\Exception\UnsupportedException;
 
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 class Curl implements Adapter
 {
     use LoggerAwareTrait;
+
+    public function __construct() {
+        $this->setLogger(new NullLogger());
+    }
     
     /**
      * Is this environment have cURL installed and the module enabled in PHP?

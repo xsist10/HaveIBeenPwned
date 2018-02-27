@@ -6,6 +6,7 @@ use xsist10\HaveIBeenPwned\Adapter\Adapter;
 use xsist10\HaveIBeenPwned\Adapter\FileGetContents;
 use xsist10\HaveIBeenPwned\Adapter\Curl;
 use xsist10\HaveIBeenPwned\Response\CheckAccountResponse;
+use Psr\Log\NullLogger;
 
 class HaveIBeenPwned
 {
@@ -27,6 +28,7 @@ class HaveIBeenPwned
         // yet. When I add PHP 7 support I'll bump it and remove this.
         if (!$this->adapter) {
             $this->adapter = new Curl();
+            $this->adapter->setLogger(new NullLogger());
         }
         return $this->adapter;
     }
