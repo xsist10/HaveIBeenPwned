@@ -6,6 +6,11 @@ use xsist10\HaveIBeenPwned\Adapter\Adapter;
 use xsist10\HaveIBeenPwned\Adapter\FileGetContents;
 use xsist10\HaveIBeenPwned\Adapter\Curl;
 use xsist10\HaveIBeenPwned\Response\CheckAccountResponse;
+use xsist10\HaveIBeenPwned\Response\AccountResponse;
+use xsist10\HaveIBeenPwned\Response\BreachResponse;
+use xsist10\HaveIBeenPwned\Response\PasteResponse;
+use xsist10\HaveIBeenPwned\Response\DataClassResponse;
+use xsist10\HaveIBeenPwned\Response\PasswordResponse;
 use Psr\Log\NullLogger;
 
 class HaveIBeenPwned
@@ -49,23 +54,35 @@ class HaveIBeenPwned
     }
 
     public function checkAccount($account) {
-        return $this->get("breachedaccount/" . urlencode($account));
+        return new AccountResponse($this->get("breachedaccount/" . urlencode($account)));
     }
 
     public function getBreaches() {
-        return $this->get("breaches");
+        $breachArray = [];
+        $result = $this->get("breaches");
+        foreach ($result as $breach) {
+            $breachArray[] = new BreachResponse($breach);
+        }
+
+        return $breachArray;
     }
 
     public function getBreach($name) {
-        return $this->get("breach/" . urlencode($name));
+        return new BreachResponse($this->get("breach/" . urlencode($name)));
     }
 
     public function getDataClasses() {
-        return $this->get("dataclasses");
+        return new DataClassResponse($this->get("dataclasses"));
     }
 
     public function getPasteAccount($account) {
-        return $this->get("pasteaccount/" . urlencode($account));
+        $pasteArray = [];
+        $result = $this->get("pasteaccount/" . urlencode($account));
+        foreach ($result as $paste) {
+            $pasteArray[] = new PasteResponse($paste);
+        }
+
+        return $pasteArray;
     }
 
     public function isPasswordCompromised($password) {
@@ -73,13 +90,7 @@ class HaveIBeenPwned
         $fragment = substr($sha1, 0, 5);
 
         $body = $this->getAdapter()->get(self::$password_url . "range/" . urlencode($fragment));
-        foreach (explode("\n", $body) as $match) {
-            $line = explode(":", $match);
-            if ($fragment . $line[0] === $sha1) {
-                return $line[1];
-            }
-        }
 
-        return 0;
+        return new PasswordResponse($body, $password);
     }
 }
