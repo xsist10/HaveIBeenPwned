@@ -92,6 +92,7 @@ $manager = new HaveIBeenPwned($adapter);
 
 - [Troy Hunt](https://github.com/troyhunt) for creating https://haveibeenpwned.com/
 - [Thomas Shone](https://github.com/xsist10)
+- [Chung-Sheng, Li](https://github.com/peter279k)
 
 
 ## License
