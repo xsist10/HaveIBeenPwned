@@ -2,6 +2,10 @@
 
 namespace xsist10\HaveIBeenPwned\Tests;
 
+use Http\Mock\Client as MockClient;
+use Http\Discovery\HttpClientDiscovery;
+use Http\Discovery\Strategy\MockClientStrategy;
+
 use xsist10\HaveIBeenPwned\HaveIBeenPwned;
 use xsist10\HaveIBeenPwned\Response\AccountResponse;
 use xsist10\HaveIBeenPwned\Response\PasteResponse;
@@ -10,14 +14,16 @@ use xsist10\HaveIBeenPwned\Response\DataClassResponse;
 use Psr\Log\NullLogger;
 use PHPUnit\Framework\TestCase;
 
+use xsist10\HaveIBeenPwned\Tests\DummyAdapter;
+use xsist10\HaveIBeenPwned\Tests\DummyClientStrategy;
+
 class HaveIBeenPwnedTest extends TestCase
 {
     protected $client;
 
     public function setUp() {
-        $adapter = new DummyAdapter();
-        $adapter->setLogger(new NullLogger());
-        $this->client = new HaveIBeenPwned($adapter);
+        HttpClientDiscovery::prependStrategy(DummyClientStrategy::class);
+        $this->client = new HaveIBeenPwned();
     }
 
     /**

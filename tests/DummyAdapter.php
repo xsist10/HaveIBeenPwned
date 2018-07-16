@@ -2,19 +2,25 @@
 
 namespace xsist10\HaveIBeenPwned\Tests;
 
-use xsist10\HaveIBeenPwned\Adapter\Adapter;
-use Psr\Log\LoggerAwareTrait;
+use Http\Client\HttpClient;
+use Psr\Http\Message\RequestInterface;
+use Http\Discovery\MessageFactoryDiscovery;
 
-class DummyAdapter implements Adapter
+
+class DummyAdapter implements HttpClient
 {
-    use LoggerAwareTrait;
 
-    public function isSupported() {
-        return true;
+    public function sendRequest(RequestInterface $request) {
+        return MessageFactoryDiscovery::find()->createResponse(
+            200,
+            null,
+            [],
+            $this->getContent($request->getUri())
+        );
     }
 
-    public function get($url) {
-        switch ($url) {
+    private function getContent($uri) {
+        switch ($uri) {
             case "https://haveibeenpwned.com/api/v2/breachedaccount/test%40example.com":
                 return <<<EOT
 [{"Title":"Dropbox","Name":"Dropbox","Domain":"dropbox.com","BreachDate":"2012-07-01","AddedDate":"2016-08-31T00:19:19Z","ModifiedDate":"2016-08-31T00:19:19Z","PwnCount":68648009,"Description":"In mid-2012, Dropbox suffered a data breach which exposed the stored credentials of tens of millions of their customers. In August 2016, <a href=\"https://motherboard.vice.com/read/dropbox-forces-password-resets-after-user-credentials-exposed\" target=\"_blank\" rel=\"noopener\">they forced password resets for customers they believed may be at risk</a>. A large volume of data totalling over 68 million records <a href=\"https://motherboard.vice.com/read/hackers-stole-over-60-million-dropbox-accounts\" target=\"_blank\" rel=\"noopener\">was subsequently traded online</a> and included email addresses and salted hashes of passwords (half of them SHA1, half of them bcrypt).","DataClasses":["Email addresses","Passwords"],"IsVerified":true,"IsFabricated":false,"IsSensitive":false,"IsActive":true,"IsRetired":false,"IsSpamList":false,"LogoType":"svg"}]
@@ -44,6 +50,10 @@ FB489BA83064C04521AC99F4ED91422A7B3:17
 FF3699DA9826B207C6CB0305A87B2E73CB2:1
 37D0679CA88DB6464EAC60DA96345513964:2088998
 EOT;
+
+            default:
+                throw new \Exception("Invalid response.");
         }
+
     }
 }
