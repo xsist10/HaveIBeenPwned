@@ -10,7 +10,14 @@
     ],
     "require": {
         "php": ">=5.5",
-        "psr/log": "^1.0"
+        "psr/log": "^1.0",
+        "guzzlehttp/psr7": "^1.4",
+        "php-http/message": "^1.6",
+        "php-http/discovery": "^1.4"
+    },
+    "suggest": {
+        "php-http/curl-client": "cURL adapter support",
+        "php-http/guzzle6-adapter": "Guzzle adapter support"
     },
     "autoload": {
         "psr-4": { "xsist10\\HaveIBeenPwned\\": "src/" }
