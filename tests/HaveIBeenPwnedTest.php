@@ -86,7 +86,9 @@ class HaveIBeenPwnedTest extends TestCase
     public function testIsPasswordCompromised()
     {
         $result = $this->client->isPasswordCompromised("12345");
-        $this->assertInternalType('numeric', $result->getPassword());
-        $this->assertEquals(2088998, $result->getPassword());
+        $this->assertInternalType('boolean', $result->isCompromised());
+        $this->assertEquals(true, $result->isCompromised());
+        $this->assertInternalType('numeric', $result->numberOfTimesCompromised());
+        $this->assertEquals(2088998, $result->numberOfTimesCompromised());
     }
 }

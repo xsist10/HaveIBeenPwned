@@ -4,28 +4,28 @@ namespace xsist10\HaveIBeenPwned\Response;
 
 class PasswordResponse
 {
-    private $responseArray;
+    private $hashList;
 
     private $password;
 
-    public function __construct($responseArray, $password) {
-        $this->responseArray = $responseArray;
+    public function __construct($response, $password) {
+        foreach (explode("\n", $response) as $match) {
+            $line = explode(":", $match);
+            $this->hashList[$line[0]] = $line[1];
+        }
+
         $this->password = $password;
     }
 
-    public function getPassword() {
+    public function isCompromised() {
+        return $this->numberOfTimesCompromised() ? true : false;
+    }
+
+    public function numberOfTimesCompromised() {
         $sha1 = strtoupper(sha1($this->password));
-        $fragment = substr($sha1, 0, 5);
-        $passwordCount = 0;
-
-        foreach (explode("\n", $this->responseArray) as $match) {
-            $line = explode(":", $match);
-            if ($fragment . $line[0] === $sha1) {
-                $passwordCount = $line[1];
-                break;
-            }
-        }
-
-        return $passwordCount;
+        $fragment = substr($sha1, 5);
+        return !empty($this->hashList[$fragment])
+            ? $this->hashList[$fragment]
+            : 0;
     }
 }
