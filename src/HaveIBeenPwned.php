@@ -22,6 +22,8 @@ use xsist10\HaveIBeenPwned\Response\DataClassResponse;
 use xsist10\HaveIBeenPwned\Response\PasswordResponse;
 use Psr\Log\NullLogger;
 
+use \RuntimeException;
+
 class HaveIBeenPwned
 {
     CONST API_URL = "https://haveibeenpwned.com/api/v2/";
@@ -79,7 +81,9 @@ class HaveIBeenPwned
             case 401:
                 throw new InvalidCredentialsException("Invalid API key specified.");
             case 400:
-                throw new RuntimeException("Bad request. Check the URL you specified for errors.");
+                throw new RuntimeException("Bad request. Check $url for errors.");
+            case 403:
+                throw new RuntimeException("Forbidden. " . $reponse->getBody());
             case 404:
                 throw new RuntimeException("Unknown endpoint specified. Check the URL you specified for errors.");
             case 429:
