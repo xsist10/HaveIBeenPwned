@@ -13,4 +13,8 @@ class DataClassResponse
     public function getDataClasses() {
         return $this->dataClass;
     }
+
+    public function __toString() {
+        return implode(", ", $this->dataClass);
+    }
 }

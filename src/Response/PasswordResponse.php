@@ -25,7 +25,7 @@ class PasswordResponse
         $sha1 = strtoupper(sha1($this->password));
         $fragment = substr($sha1, 5);
         return !empty($this->hashList[$fragment])
-            ? $this->hashList[$fragment]
+            ? (int)$this->hashList[$fragment]
             : 0;
     }
 }

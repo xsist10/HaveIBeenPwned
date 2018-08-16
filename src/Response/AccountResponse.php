@@ -17,7 +17,7 @@ class AccountResponse
     public function getBreaches() {
         $breaches = [];
         foreach ($this->responseArray as $breach) {
-            $breaches [] = new BreachResponse($breach);
+            $breaches[] = new BreachResponse($breach);
         }
 
         return $breaches;
