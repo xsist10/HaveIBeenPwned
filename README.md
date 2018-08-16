@@ -13,17 +13,40 @@ composer require xsist10/haveibeenpwned:~2.0
 ### Create manager instance
 ``` php
 use xsist10\HaveIBeenPwned\HaveIBeenPwned;
-use xsist10\HaveIBeenPwned\Adapter\Curl;
-use xsist10\HaveIBeenPwned\Adapter\FileGetContents;
 
 // By default the $manager will use a Curl adapter
 $manager = new HaveIBeenPwned();
+```
+
+By default the `$manager` will attempt to find the best HTTP client to use. You can install the adapter for your prefered client. You can find a list of available ones on the [HTTP Plug's client page](http://docs.php-http.org/en/latest/clients.html
+
+If you want to manually specify your HTTP client adapters you can pass it in as a constructor.
+
+```bash
+# Install the cURL adapter
+composer require php-http/curl-client
+```
+
+```php
+// Manually specify the cURL adapter
+use Http\Client\Curl\Client;
+use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\StreamFactoryDiscovery;
+
+$messageFactory = MessageFactoryDiscovery::find();
+$streamFactory = StreamFactoryDiscovery::find();
+
+// Specify your CURLOPTs: http://php.net/manual/en/function.curl-setopt.php
+$options = [
+    // HaveIBeenPwnd API requires a user-agent to be specified
+    CURLOPT_USERAGENT => 'your-user-agent',
+    // The number of seconds to wait while trying to connect.
+    CURLOPT_CONNECTTIMEOUT => 10,
+];
+$client = new Client($messageFactory, $streamFactory, $options);
 
 // You can create a new manager with a specified adapter
-$manager = new HaveIBeenPwned(new Curl());
-
-// You can also set the adapter after creation
-$manager->setAdapter(new FileGetContents());
+$manager = new HaveIBeenPwned($client, $messageFactory);
 
 ```
 
@@ -90,18 +113,30 @@ $ composer require monolog/monolog
 ### Use Monolog with HaveIBeenPwned
 ```php
 use xsist10\HaveIBeenPwned\HaveIBeenPwned;
-use xsist10\HaveIBeenPwned\Adapter\Curl;
 
+use Http\Client\Common\Plugin\LoggerPlugin;
+use Http\Client\Common\PluginClient;
+use Http\Client\Curl\Client;
+use Http\Discovery\HttpClientDiscovery;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
+// Create our log instance
 $log = new Logger('name');
 // Push all logging up to the level of DEBUG to our log file
 $log->pushHandler(new StreamHandler('[full log filename]', Logger::DEBUG));
 
-$adapter = new Curl();
-$adapter->setLogger($log);
-$manager = new HaveIBeenPwned($adapter);
+// Create our HTTP Client logger plugin
+$loggerPlugin = new LoggerPlugin($log);
+
+// Create our HTTP Client and compose it into a plugin client
+$pluginClient = new PluginClient(
+    HttpClientDiscovery::find(),
+    [$loggerPlugin]
+);
+
+// You can create a new manager with a specified adapter
+$manager = new HaveIBeenPwned($client);
 
 // Calls made to HaveIBeenPwned will be logged to your log file now
 ```

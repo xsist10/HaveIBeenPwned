@@ -3,6 +3,8 @@
 namespace xsist10\HaveIBeenPwned;
 
 
+use Http\Client\Common\Plugin\HeaderDefaultsPlugin;
+use Http\Client\Common\PluginClient;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
@@ -22,8 +24,10 @@ use Psr\Log\NullLogger;
 
 class HaveIBeenPwned
 {
-    private static $base_url = "https://haveibeenpwned.com/api/v2/";
-    private static $password_url = "https://api.pwnedpasswords.com/";
+    CONST API_URL = "https://haveibeenpwned.com/api/v2/";
+    const API_PASSWORD_URL = "https://api.pwnedpasswords.com/";
+
+    const USER_AGENT = 'xsist10/haveibeenpwned';
 
     protected $client;
     protected $messageFactory;
@@ -40,7 +44,15 @@ class HaveIBeenPwned
      */
     protected function getHttpClient() {
         if (!$this->client) {
-            $this->client = HttpClientDiscovery::find();
+            // Specify the user agent to prevent a "API request must include a user agent" error
+            $headerDefaultsPlugin = new HeaderDefaultsPlugin([
+                'User-Agent' => self::USER_AGENT
+            ]);
+
+            $this->client = new PluginClient(
+                HttpClientDiscovery::find(),
+                [$headerDefaultsPlugin]
+            );
         }
         return $this->client;
     }
@@ -91,12 +103,12 @@ class HaveIBeenPwned
     }
 
     public function checkAccount($account) {
-        return new AccountResponse($this->getJSON(self::$base_url . "breachedaccount/" . urlencode($account)));
+        return new AccountResponse($this->getJSON(self::API_URL . "breachedaccount/" . urlencode($account)));
     }
 
     public function getBreaches() {
         $breachArray = [];
-        $result = $this->getJSON(self::$base_url . "breaches");
+        $result = $this->getJSON(self::API_URL . "breaches");
         foreach ($result as $breach) {
             $breachArray[] = new BreachResponse($breach);
         }
@@ -105,16 +117,16 @@ class HaveIBeenPwned
     }
 
     public function getBreach($name) {
-        return new BreachResponse($this->getJSON(self::$base_url . "breach/" . urlencode($name)));
+        return new BreachResponse($this->getJSON(self::API_URL . "breach/" . urlencode($name)));
     }
 
     public function getDataClasses() {
-        return new DataClassResponse($this->getJSON(self::$base_url . "dataclasses"));
+        return new DataClassResponse($this->getJSON(self::API_URL . "dataclasses"));
     }
 
     public function getPasteAccount($account) {
         $pasteArray = [];
-        $result = $this->getJSON(self::$base_url . "pasteaccount/" . urlencode($account));
+        $result = $this->getJSON(self::API_URL . "pasteaccount/" . urlencode($account));
         foreach ($result as $paste) {
             $pasteArray[] = new PasteResponse($paste);
         }
@@ -126,7 +138,7 @@ class HaveIBeenPwned
         $sha1 = strtoupper(sha1($password));
         $fragment = substr($sha1, 0, 5);
 
-        $body = $this->get(self::$password_url . "range/" . urlencode($fragment));
+        $body = $this->get(self::API_PASSWORD_URL . "range/" . urlencode($fragment));
         return new PasswordResponse($body, $password);
     }
 }
