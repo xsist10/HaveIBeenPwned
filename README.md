@@ -14,7 +14,6 @@ composer require xsist10/haveibeenpwned:~2.0
 ``` php
 use xsist10\HaveIBeenPwned\HaveIBeenPwned;
 
-// By default the $manager will use a Curl adapter
 $manager = new HaveIBeenPwned();
 ```
 
