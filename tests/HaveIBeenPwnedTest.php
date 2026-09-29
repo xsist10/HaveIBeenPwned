@@ -14,7 +14,7 @@ class HaveIBeenPwnedTest extends TestCase
 {
     protected $client;
 
-    public function setUp() {
+    protected function setUp(): void {
         $adapter = new DummyAdapter();
         $adapter->setLogger(new NullLogger());
         $this->client = new HaveIBeenPwned($adapter);
@@ -40,7 +40,7 @@ class HaveIBeenPwnedTest extends TestCase
     {
         $result = $this->client->getPasteAccount("test@example.com");
         $pasteResponse = $result[0];
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertInstanceOf(PasteResponse::class, $pasteResponse);
         $this->assertCount(1, $result);
         $this->assertEquals("KsXNChr2", $pasteResponse->getId());
@@ -53,7 +53,7 @@ class HaveIBeenPwnedTest extends TestCase
     {
         $result = $this->client->getBreaches();
         $breachResponse = $result[0];
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertInstanceOf(BreachResponse::class, $breachResponse);
         $this->assertCount(1, $result);
         $this->assertEquals("000webhost", $breachResponse->getTitle());
@@ -73,14 +73,14 @@ class HaveIBeenPwnedTest extends TestCase
     {
         $result = $this->client->getDataClasses();
         $this->assertInstanceOf(DataClassResponse::class, $result);
-        $this->assertInternalType('array', $result->getDataClasses());
+        $this->assertIsArray($result->getDataClasses());
         $this->assertCount(97, $result->getDataClasses());
     }
 
     public function testIsPasswordCompromised()
     {
         $result = $this->client->isPasswordCompromised("12345");
-        $this->assertInternalType('numeric', $result->getPassword());
+        $this->assertIsNumeric($result->getPassword());
         $this->assertEquals(2088998, $result->getPassword());
     }
 }
